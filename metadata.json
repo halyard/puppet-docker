@@ -1,0 +1,16 @@
+{
+  "name": "halyard-docker",
+  "version": "0.0.1",
+  "author": "Les Aker",
+  "license": "MIT",
+  "summary": "Configure devices and mounts",
+  "source": "https://github.com/halyard/puppet-docker",
+  "project_page": "https://github.com/halyard/puppet-docker",
+  "issues_url": "https://github.com/halyard/puppet-docker/issues",
+  "dependencies": [
+
+  ],
+  "operatingsystem_support": [
+
+  ]
+}
