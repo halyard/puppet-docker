@@ -6,6 +6,11 @@ class docker (
 ) {
   package { 'docker': }
 
+  file { '/etc/docker/daemon.json':
+    ensure => file,
+    source => 'puppet:///modules/docker/daemon.json',
+  }
+
   -> service { 'docker':
     ensure => running,
     enable => true,
