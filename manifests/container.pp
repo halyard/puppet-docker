@@ -10,6 +10,8 @@ define docker::container (
   String $cmd,
   String $container_name = $title,
 ) {
+  include docker
+
   file { "/etc/container/${container_name}":
     ensure  => file,
     content => template('docker/container.erb'),
