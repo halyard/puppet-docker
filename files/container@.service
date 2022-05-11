@@ -1,0 +1,15 @@
+[Unit]
+Description=Docker container
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+EnvironmentFile=/etc/container/$i
+ExecStartPre=-/usr/bin/docker stop %i
+ExecStartPre=-/usr/bin/docker rm -f %i
+ExecStartPre=/usr/bin/docker pull $image
+ExecStart=/usr/bin/docker run --name="%i" $args $image $cmd
+
+[Install]
+WantedBy=multi-user.target
