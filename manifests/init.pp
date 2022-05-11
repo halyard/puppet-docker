@@ -21,6 +21,10 @@ class docker (
     source => 'puppet:///modules/docker/container@.service',
   }
 
+  file { '/etc/container':
+    ensure => directory,
+  }
+
   $docker::containers.each | String $name, Hash $options | {
     docker::container { $name:
       * => $options,
