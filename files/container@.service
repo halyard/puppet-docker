@@ -1,11 +1,11 @@
 [Unit]
-Description=Docker container
+Description=Docker container for %i
 After=docker.service
 Requires=docker.service
 
 [Service]
 Restart=always
-EnvironmentFile=/etc/container/$i
+EnvironmentFile=/etc/container/%i
 ExecStartPre=-/usr/bin/docker stop %i
 ExecStartPre=-/usr/bin/docker rm -f %i
 ExecStartPre=/usr/bin/docker pull $image
