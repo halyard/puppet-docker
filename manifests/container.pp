@@ -6,7 +6,7 @@
 # @param container_name (namevar) sets the name of the container
 define docker::container (
   String $image,
-  String $args,
+  Array[String] $args,
   String $cmd,
   String $container_name = $title,
 ) {
