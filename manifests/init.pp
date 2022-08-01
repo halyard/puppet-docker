@@ -25,6 +25,23 @@ class docker (
     ensure => directory,
   }
 
+  firewall { '100 masquerade for docker containers':
+    chain    => 'POSTROUTING',
+    jump     => 'MASQUERADE',
+    proto    => 'all',
+    outiface => '! docker0',
+    iniface  => 'docker0',
+    table    => 'nat',
+  }
+
+  firewall { '100 forward for docker containers':
+    chain    => 'FORWARD',
+    action   => 'ACCEPT',
+    proto    => 'all',
+    outiface => '! docker0',
+    iniface  => 'docker0',
+  }
+
   $docker::containers.each | String $name, Hash $options | {
     docker::container { $name:
       * => $options,
