@@ -30,7 +30,7 @@ class docker (
     jump     => 'MASQUERADE',
     proto    => 'all',
     outiface => '! docker0',
-    iniface  => 'docker0',
+    source   => '172.17.0.0/16',
     table    => 'nat',
   }
 
