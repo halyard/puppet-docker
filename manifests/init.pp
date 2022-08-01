@@ -36,7 +36,7 @@ class docker (
 
   firewall { '100 forward for docker containers':
     chain    => 'FORWARD',
-    action   => 'ACCEPT',
+    action   => 'accept',
     proto    => 'all',
     outiface => '! docker0',
     iniface  => 'docker0',
