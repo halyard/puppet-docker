@@ -34,12 +34,20 @@ class docker (
     table    => 'nat',
   }
 
-  firewall { '100 forward for docker containers':
+  firewall { '100 forward from docker containers':
     chain    => 'FORWARD',
     action   => 'accept',
     proto    => 'all',
     outiface => '! docker0',
     iniface  => 'docker0',
+  }
+
+  firewall { '100 forward to docker containers':
+    chain    => 'FORWARD',
+    action   => 'accept',
+    proto    => 'all',
+    outiface => 'docker0',
+    iniface  => '! docker0',
   }
 
   $docker::containers.each | String $name, Hash $options | {
