@@ -25,6 +25,25 @@ class docker (
     ensure => directory,
   }
 
+  firewallchain { 'DOCKER_EXPOSE:nat:IPv4':
+    ensure  => present,
+  }
+
+  firewall { '100 handle incoming traffic for containers':
+    chain    => 'PREROUTING',
+    jump     => 'DOCKER_EXPOSE',
+    dst_type => 'LOCAL',
+    table    => 'nat',
+  }
+
+  firewall { '100 handle uturn traffic for containers':
+    chain       => 'OUTPUT',
+    jump        => 'DOCKER_EXPOSE',
+    destination => '! 127.0.0.0/8',
+    dst_type    => 'LOCAL',
+    table       => 'nat',
+  }
+
   firewall { '100 masquerade for docker containers':
     chain    => 'POSTROUTING',
     jump     => 'MASQUERADE',
