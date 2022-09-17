@@ -8,7 +8,13 @@ class docker (
 ) {
   package { 'docker': }
 
-  file { '/etc/docker/daemon.json':
+  -> file { $data_root:
+    ensure => directory,
+    owner  => root,
+    group  => root,
+  }
+
+  -> file { '/etc/docker/daemon.json':
     ensure  => file,
     content => template('docker/daemon.json.erb'),
   }
