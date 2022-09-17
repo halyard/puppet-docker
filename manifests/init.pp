@@ -9,8 +9,8 @@ class docker (
   package { 'docker': }
 
   file { '/etc/docker/daemon.json':
-    ensure   => file,
-    contents => template('docker/daemon.json.erb'),
+    ensure  => file,
+    content => template('docker/daemon.json.erb'),
   }
 
   -> service { 'docker':
