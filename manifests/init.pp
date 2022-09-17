@@ -1,14 +1,16 @@
 # @summary Configure Docker containers
 #
 # @param containers to launch
+# @param data_root for storing docker images / volumes
 class docker (
   Hash[String, Hash] $containers = {},
+  String $data_root = '/var/lib/docker',
 ) {
   package { 'docker': }
 
   file { '/etc/docker/daemon.json':
-    ensure => file,
-    source => 'puppet:///modules/docker/daemon.json',
+    ensure   => file,
+    contents => template('docker/daemon.json.erb'),
   }
 
   -> service { 'docker':
