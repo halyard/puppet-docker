@@ -4,11 +4,13 @@
 # @param args sets the arguments for the docker run command
 # @param cmd sets the command to launch the container with
 # @param container_name (namevar) sets the name of the container
+# @param network sets the network to use for the container
 define docker::container (
   String $image,
   Array[String] $args,
   String $cmd,
   String $container_name = $title,
+  String $network = 'docker0',
 ) {
   include docker
 
