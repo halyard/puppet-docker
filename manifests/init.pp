@@ -2,9 +2,11 @@
 #
 # @param containers to launch
 # @param data_root for storing docker images / volumes
+# @param bridge_subnet sets the subnet used for the docker bridge
 class docker (
   Hash[String, Hash] $containers = {},
   String $data_root = '/var/lib/docker',
+  String $bridge_subnet = '172.17.0.0/16',
 ) {
   package { 'docker': }
 
@@ -77,9 +79,16 @@ class docker (
     iniface  => '! docker0',
   }
 
+  exec { 'create docker network':
+    command   => "/usr/bin/docker network create --subnet ${bridge_subnet} -o com.docker.network.bridge.name=docker0 docker0",
+    creates   => '/proc/sys/net/ipv4/conf/docker0',
+    subscribe => Service['docker'],
+  }
+
   $docker::containers.each | String $name, Hash $options | {
     docker::container { $name:
-      * => $options,
+      *       => $options,
+      require => Exec['create docker network'],
     }
   }
 }
