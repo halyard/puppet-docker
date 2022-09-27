@@ -10,7 +10,7 @@ define docker::container (
   Array[String] $args,
   String $cmd,
   String $container_name = $title,
-  String $network = 'docker0',
+  String $network = 'docker1',
 ) {
   include docker
 

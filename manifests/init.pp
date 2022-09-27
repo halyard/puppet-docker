@@ -58,7 +58,7 @@ class docker (
     chain    => 'POSTROUTING',
     jump     => 'MASQUERADE',
     proto    => 'all',
-    outiface => '! docker0',
+    outiface => '! docker1',
     source   => '172.17.0.0/16',
     table    => 'nat',
   }
@@ -67,21 +67,21 @@ class docker (
     chain    => 'FORWARD',
     action   => 'accept',
     proto    => 'all',
-    outiface => '! docker0',
-    iniface  => 'docker0',
+    outiface => '! docker1',
+    iniface  => 'docker1',
   }
 
   firewall { '100 forward to docker containers':
     chain    => 'FORWARD',
     action   => 'accept',
     proto    => 'all',
-    outiface => 'docker0',
-    iniface  => '! docker0',
+    outiface => 'docker1',
+    iniface  => '! docker1',
   }
 
   exec { 'create docker network':
-    command   => "/usr/bin/docker network create --subnet ${bridge_subnet} -o com.docker.network.bridge.name=docker0 docker0",
-    unless    => '/usr/bin/docker network inspect docker0',
+    command   => "/usr/bin/docker network create --subnet ${bridge_subnet} -o com.docker.network.bridge.name=docker1 docker1",
+    unless    => '/usr/bin/docker network inspect docker1',
     subscribe => Service['docker'],
   }
 
