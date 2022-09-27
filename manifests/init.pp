@@ -81,7 +81,7 @@ class docker (
 
   exec { 'create docker network':
     command   => "/usr/bin/docker network create --subnet ${bridge_subnet} -o com.docker.network.bridge.name=docker0 docker0",
-    unless    => '/usr/bin/docker network inspect docker0'
+    unless    => '/usr/bin/docker network inspect docker0',
     subscribe => Service['docker'],
   }
 
