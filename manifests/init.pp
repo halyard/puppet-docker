@@ -2,7 +2,7 @@
 #
 # @param containers to launch
 # @param data_root for storing docker images / volumes
-# @param bridge_subnet sets the subnet used for the docker bridge
+# @param bridge_subnet sets the subnet used for the custom bridge
 # @param bridge_name sets the name of the custom bridge
 class docker (
   Hash[String, Hash] $containers = {},
@@ -79,6 +79,31 @@ class docker (
     proto    => 'all',
     outiface => $bridge_name,
     iniface  => "! ${bridge_name}",
+  }
+
+  firewall { '100 masquerade for default docker containers':
+    chain    => 'POSTROUTING',
+    jump     => 'MASQUERADE',
+    proto    => 'all',
+    outiface => '! docker0',
+    source   => '172.31.255.0/24',
+    table    => 'nat',
+  }
+
+  firewall { '100 forward from default docker containers':
+    chain    => 'FORWARD',
+    action   => 'accept',
+    proto    => 'all',
+    outiface => '! docker0',
+    iniface  => 'docker0',
+  }
+
+  firewall { '100 forward to default docker containers':
+    chain    => 'FORWARD',
+    action   => 'accept',
+    proto    => 'all',
+    outiface => 'docker0',
+    iniface  => '! docker0',
   }
 
   exec { 'create docker network':
