@@ -3,10 +3,12 @@
 # @param containers to launch
 # @param data_root for storing docker images / volumes
 # @param bridge_subnet sets the subnet used for the docker bridge
+# @param default_bridge controls whether Docker creates a default bridge for containers
 class docker (
   Hash[String, Hash] $containers = {},
   String $data_root = '/var/lib/docker',
   String $bridge_subnet = '172.17.0.0/16',
+  String $default_bridge = 'none',
 ) {
   package { 'docker': }
 
