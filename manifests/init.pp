@@ -3,12 +3,12 @@
 # @param containers to launch
 # @param data_root for storing docker images / volumes
 # @param bridge_subnet sets the subnet used for the docker bridge
-# @param default_bridge controls whether Docker creates a default bridge for containers
+# @param bridge_name sets the name of the custom bridge
 class docker (
   Hash[String, Hash] $containers = {},
   String $data_root = '/var/lib/docker',
   String $bridge_subnet = '172.17.0.0/16',
-  String $default_bridge = 'none',
+  String $bridge_name = 'docker1',
 ) {
   package { 'docker': }
 
@@ -60,8 +60,8 @@ class docker (
     chain    => 'POSTROUTING',
     jump     => 'MASQUERADE',
     proto    => 'all',
-    outiface => '! docker1',
-    source   => '172.17.0.0/16',
+    outiface => "! ${bridge_name}",
+    source   => $bridge_subnet,
     table    => 'nat',
   }
 
@@ -69,21 +69,21 @@ class docker (
     chain    => 'FORWARD',
     action   => 'accept',
     proto    => 'all',
-    outiface => '! docker1',
-    iniface  => 'docker1',
+    outiface => "! ${bridge_name}",
+    iniface  => $bridge_name,
   }
 
   firewall { '100 forward to docker containers':
     chain    => 'FORWARD',
     action   => 'accept',
     proto    => 'all',
-    outiface => 'docker1',
-    iniface  => '! docker1',
+    outiface => $bridge_name,
+    iniface  => "! ${bridge_name}",
   }
 
   exec { 'create docker network':
-    command   => "/usr/bin/docker network create --subnet ${bridge_subnet} -o com.docker.network.bridge.name=docker1 docker1",
-    unless    => '/usr/bin/docker network inspect docker1',
+    command   => "/usr/bin/docker network create --subnet ${bridge_subnet} -o com.docker.network.bridge.name=${bridge_name} ${bridge_name}",
+    unless    => "/usr/bin/docker network inspect ${bridge_name}",
     subscribe => Service['docker'],
   }
 
