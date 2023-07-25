@@ -12,7 +12,7 @@ class docker (
 ) {
   package { 'docker': }
 
-  -> file { $data_root:
+  -> file { [$data_root, '/etc/docker']:
     ensure => directory,
     owner  => root,
     group  => root,
