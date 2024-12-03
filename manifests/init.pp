@@ -48,7 +48,7 @@ class docker (
     table    => 'nat',
   }
 
-  firewall { '100 handle uturn traffic for containers':
+  firewall { '100 handle uturn traffic for containers and localhost':
     chain    => 'OUTPUT',
     jump     => 'DOCKER_EXPOSE',
     dst_type => 'LOCAL',
@@ -87,6 +87,10 @@ class docker (
     proto    => 'all',
     outiface => $bridge_name,
     iniface  => "! ${bridge_name}",
+  }
+
+  sysctl::setting { "net.ipv4.conf.${bridge_name}.route_localnet":
+    value => '1',
   }
 
   exec { 'create docker network':
