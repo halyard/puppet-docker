@@ -51,7 +51,6 @@ class docker (
   firewall { '100 handle uturn traffic for containers':
     chain       => 'OUTPUT',
     jump        => 'DOCKER_EXPOSE',
-    destination => '! 127.0.0.0/8',
     dst_type    => 'LOCAL',
     table       => 'nat',
   }
@@ -62,6 +61,15 @@ class docker (
     proto    => 'all',
     outiface => "! ${bridge_name}",
     source   => $bridge_subnet,
+    table    => 'nat',
+  }
+
+  firewall { '100 masquerade for localhost uturn':
+    chain    => 'POSTROUTING',
+    jump     => 'MASQUERADE',
+    src_type => 'LOCAL',
+    dst_type => 'UNICAST'
+    outiface => "${bridge_name}",
     table    => 'nat',
   }
 
@@ -79,31 +87,6 @@ class docker (
     proto    => 'all',
     outiface => $bridge_name,
     iniface  => "! ${bridge_name}",
-  }
-
-  firewall { '100 masquerade for default docker containers':
-    chain    => 'POSTROUTING',
-    jump     => 'MASQUERADE',
-    proto    => 'all',
-    outiface => '! docker0',
-    source   => '172.31.255.0/24',
-    table    => 'nat',
-  }
-
-  firewall { '100 forward from default docker containers':
-    chain    => 'FORWARD',
-    action   => 'accept',
-    proto    => 'all',
-    outiface => '! docker0',
-    iniface  => 'docker0',
-  }
-
-  firewall { '100 forward to default docker containers':
-    chain    => 'FORWARD',
-    action   => 'accept',
-    proto    => 'all',
-    outiface => 'docker0',
-    iniface  => '! docker0',
   }
 
   exec { 'create docker network':
