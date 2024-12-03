@@ -68,8 +68,8 @@ class docker (
     chain    => 'POSTROUTING',
     jump     => 'MASQUERADE',
     src_type => 'LOCAL',
-    dst_type => 'UNICAST'
-    outiface => "${bridge_name}",
+    dst_type => 'UNICAST',
+    outiface => $bridge_name,
     table    => 'nat',
   }
 
