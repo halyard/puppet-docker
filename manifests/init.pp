@@ -49,10 +49,10 @@ class docker (
   }
 
   firewall { '100 handle uturn traffic for containers':
-    chain       => 'OUTPUT',
-    jump        => 'DOCKER_EXPOSE',
-    dst_type    => 'LOCAL',
-    table       => 'nat',
+    chain    => 'OUTPUT',
+    jump     => 'DOCKER_EXPOSE',
+    dst_type => 'LOCAL',
+    table    => 'nat',
   }
 
   firewall { '100 masquerade for docker containers':
