@@ -39,7 +39,7 @@ class docker (
 
   file { '/etc/systemd/system/docker-prune.service':
     ensure => file,
-    source => 'puppet:///modules/docker/docker-prune.service.erb',
+    source => 'puppet:///modules/docker/docker-prune.service',
     notify => Service['docker-prune.timer'],
   }
 
