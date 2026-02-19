@@ -37,6 +37,23 @@ class docker (
     ensure => directory,
   }
 
+  file { '/etc/systemd/system/docker-prune.service':
+    ensure => file,
+    source => 'puppet:///modules/docker/docker-prune.service.erb'),
+    notify => Service['docker-prune.timer'],
+  }
+
+  file { '/etc/systemd/system/docker-prune.timer':
+    ensure => file,
+    source => 'puppet:///modules/docker/docker-prune.timer',
+    notify => Service['docker-prune.timer'],
+  }
+
+  service { 'docker-prune.timer':
+    ensure => running,
+    enable => true,
+  }
+
   firewallchain { 'DOCKER_EXPOSE:nat:IPv4':
     ensure  => present,
   }
