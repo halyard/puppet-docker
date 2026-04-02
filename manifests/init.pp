@@ -55,7 +55,7 @@ class docker (
   }
 
   firewallchain { 'DOCKER_EXPOSE:nat:IPv4':
-    ensure  => present,
+    ensure => present,
   }
 
   firewall { '100 handle incoming traffic for containers':
