@@ -4,15 +4,23 @@
 # @param data_root for storing docker images / volumes
 # @param bridge_subnet sets the subnet used for the custom bridge
 # @param bridge_name sets the name of the custom bridge
+# @param registry_creds is a map of registry hostnames and credential strings
 class docker (
   Hash[String, Hash] $containers = {},
   String $data_root = '/var/lib/docker',
   String $bridge_subnet = '172.17.0.0/16',
   String $bridge_name = 'docker1',
+  Hash[String, String] $registry_creds = {},
 ) {
+  $registry_creds_mapped = $registry_creds.map |$key, $value| { [$key, { 'auth' => $value }] }.convert_to(Hash)
+
+  $registry_creds_hash = {
+    'auths' => $registry_creds_mapped,
+  }
+
   package { 'docker': }
 
-  -> file { [$data_root, '/etc/docker']:
+  -> file { [$data_root, '/etc/docker', '/root/.docker']:
     ensure => directory,
     owner  => root,
     group  => root,
@@ -21,6 +29,11 @@ class docker (
   -> file { '/etc/docker/daemon.json':
     ensure  => file,
     content => template('docker/daemon.json.erb'),
+  }
+
+  -> file { '/root/.docker/config.json':
+    ensure  => file,
+    content => to_json($registry_creds_hash),
   }
 
   -> service { 'docker':
