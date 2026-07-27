@@ -33,7 +33,7 @@ class docker (
 
   -> file { '/root/.docker/config.json':
     ensure  => file,
-    content => to_json($registry_creds_hash),
+    content => stdlib::to_json($registry_creds_hash),
   }
 
   -> service { 'docker':
